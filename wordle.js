@@ -5,19 +5,21 @@ var row = 0 //attempt number
 var col = 0 //current letter for attempt
 
 var gameOver = false
-var words = [
-  'ABOUT',
-  'FIELD',
-  'DROVE',
-  'GOING',
-  'PEACE',
-  'ROUND',
-  'SLIDE',
-  'VITAL',
-  'WOULD',
-  'YOUNG',
-]
-var word = words[Math.floor(Math.random() * words.length)]
+// var words = [
+//   'ABOUT',
+//   'FIELD',
+//   'DROVE',
+//   'GOING',
+//   'PEACE',
+//   'ROUND',
+//   'SLIDE',
+//   'VITAL',
+//   'WOULD',
+//   'YOUNG',
+// ]
+// var word = words[Math.floor(Math.random() * words.length)]
+
+var word = 'SQUID'
 
 window.onload = function () {
   initialise()
@@ -74,6 +76,17 @@ const initialise = () => {
 
 const update = () => {
   let correct = 0
+  let letterCount = {} // BENNY -> {B:1, E:1, N:1, Y:1}
+  for (let i = 0; i < word.length; i++) {
+    let letter = word[i]
+    if (letterCount[letter]) {
+      letterCount[letter] += 1
+    } else {
+      letterCount[letter] = 1
+    }
+  }
+
+  //first iteration, checks all correct ones
   for (let c = 0; c < width; c++) {
     let currentTile = document.getElementById(
       row.toString() + '-' + c.toString()
@@ -85,15 +98,29 @@ const update = () => {
     if (word[c] == letter) {
       currentTile.classList.add('correct')
       correct += 1
-    } else if (word.includes(letter)) {
-      //exists in word
-      currentTile.classList.add('present')
+      letterCount[letter] -= 1
     }
-    //does not exist
-    else currentTile.classList.add('absent')
 
     if (correct == width) {
       gameOver = true
+    }
+  }
+
+  //marks presence and wrong pos
+  for (let c = 0; c < width; c++) {
+    let currentTile = document.getElementById(
+      row.toString() + '-' + c.toString()
+    )
+
+    let letter = currentTile.innerText
+    if (!currentTile.classList.contains('correct')) {
+      if (word.includes(letter) && letterCount[letter] > 0) {
+        //exists in word
+        currentTile.classList.add('present')
+        letterCount[letter] -= 1
+      }
+      //does not exist
+      else currentTile.classList.add('absent')
     }
   }
 }
