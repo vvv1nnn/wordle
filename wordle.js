@@ -12981,38 +12981,84 @@ const initialise = () => {
     }
   }
 
+  //populate keboard
+  let keyboard = [
+    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ' '],
+    ['Enter', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '⌫'],
+  ]
+
+  for (let i = 0; i < keyboard.length; i++) {
+    let currentRow = keyboard[i]
+    let keyboardRow = document.createElement('div')
+    keyboardRow.classList.add('keyboard-row')
+
+    for (let j = 0; j < currentRow.length; j++) {
+      let keyTile = document.createElement('div')
+
+      let key = currentRow[j]
+      keyTile.innerText = key
+      if (key == 'Enter') {
+        keyTile.id = 'Enter'
+      } else if (key == '⌫') {
+        keyTile.id = '⌫'
+      } else if ('A' <= key && key <= 'Z') {
+        keyTile.id = 'Key' + key
+      }
+
+      keyTile.addEventListener('click', processKey)
+
+      if (key == 'Enter') {
+        keyTile.classList.add('enter-key-tile')
+      } else {
+        keyTile.classList.add('key-tile')
+      }
+      keyboardRow.appendChild(keyTile)
+    }
+    document.body.appendChild(keyboardRow)
+  }
+
   //User event on keypress
 
   document.addEventListener('keyup', (e) => {
-    if (gameOver) return
-
-    if ('KeyA' <= e.code && e.code <= 'KeyZ') {
-      if (col < width) {
-        let currentTile = document.getElementById(
-          row.toString() + '-' + col.toString()
-        )
-        if (currentTile.innerText == '') {
-          currentTile.innerText = e.code[3]
-          col += 1
-        }
-      }
-    } else if (e.code == 'Backspace') {
-      if (0 < col && col <= width) {
-        col -= 1
-        let currentTile = document.getElementById(
-          row.toString() + '-' + col.toString()
-        )
-        currentTile.innerText = ''
-      }
-    } else if (e.code == 'Enter') {
-      update()
-    }
-
-    if (!gameOver && row == height) {
-      gameOver = true
-      document.getElementById('answer').innerText = word
-    }
+    processInput(e)
   })
+}
+
+function processKey() {
+  let e = { code: this.id }
+  processInput(e)
+}
+
+const processInput = (e) => {
+  if (gameOver) return
+
+  if ('KeyA' <= e.code && e.code <= 'KeyZ') {
+    if (col < width) {
+      let currentTile = document.getElementById(
+        row.toString() + '-' + col.toString()
+      )
+      if (currentTile.innerText == '') {
+        currentTile.innerText = e.code[3]
+        col += 1
+      }
+    }
+  } else if (e.code == 'Backspace') {
+    if (0 < col && col <= width) {
+      col -= 1
+      let currentTile = document.getElementById(
+        row.toString() + '-' + col.toString()
+      )
+      currentTile.innerText = ''
+    }
+  } else if (e.code == 'Enter') {
+    update()
+  }
+
+  if (!gameOver && row == height) {
+    gameOver = true
+    document.getElementById('answer').innerText = word
+  }
 }
 
 const update = () => {
@@ -13058,6 +13104,10 @@ const update = () => {
     //correct position
     if (word[c] == letter) {
       currentTile.classList.add('correct')
+
+      let keyTile = document.getElementById('Key' + letter)
+      keyTile.classList.remove('present')
+      keyTile.classList.add('correct')
       correct += 1
       letterCount[letter] -= 1
     }
@@ -13078,6 +13128,11 @@ const update = () => {
       if (word.includes(letter) && letterCount[letter] > 0) {
         //exists in word
         currentTile.classList.add('present')
+        let keyTile = document.getElementById('Key' + letter)
+        if (!keyTile.classList.contains('correct')) {
+          keyTile.classList.add('present')
+        }
+
         letterCount[letter] -= 1
       }
       //does not exist
