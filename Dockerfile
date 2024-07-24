@@ -1,18 +1,3 @@
-FROM node:20-alpine as BUILDER
-WORKDIR /app
-
-COPY [ "package-lock.json*", "./"]
-RUN npm ci
-
-COPY . .
-
-ENV NODE_ENV=production
-RUN npm run build
-
 FROM nginx:stable-alpine
-WORKDIR /app
-
-COPY --from=BUILDER /app/dist /app/www
-COPY nginx.conf /etc/nginx/nginx.conf
-
+COPY static /usr/share/nginx/html
 EXPOSE 80
