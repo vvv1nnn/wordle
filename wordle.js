@@ -13001,7 +13001,7 @@ const initialise = () => {
       if (key == 'Enter') {
         keyTile.id = 'Enter'
       } else if (key == '⌫') {
-        keyTile.id = '⌫'
+        keyTile.id = 'Backspace'
       } else if ('A' <= key && key <= 'Z') {
         keyTile.id = 'Key' + key
       }
