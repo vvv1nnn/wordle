@@ -13137,6 +13137,8 @@ const update = () => {
       }
       //does not exist
       else currentTile.classList.add('absent')
+      let keyTile = document.getElementById('Key' + letter)
+      keyTile.classList.add('absent')
     }
   }
 
