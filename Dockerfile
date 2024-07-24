@@ -1,7 +1,7 @@
 FROM node:20-alpine as BUILDER
 WORKDIR /app
 
-COPY ["package.json", "package-lock.json*", "./"]
+COPY [ "package-lock.json*", "./"]
 RUN npm ci
 
 COPY . .
